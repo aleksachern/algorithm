@@ -1,0 +1,75 @@
+prcros[n1_, n2_] := (
+   dl = Length[listL];
+   {x01, y01, A1, B1} = listL[[n1]];
+   {x02, y02, A2, B2} = listL[[n2]];
+   mk = {{A1, -B1}, {A2, -B2}};
+   If [A1 B2 - A2 B1 != 0, (
+     b = {A1 x01 - B1 y01, A2 x02 - B2 y02};
+     {xc, yc} = Inverse[mk].b), Print[no_cros]]);
+
+project[xc_, yc_] := (
+   dl = Length[listL];
+   sch = 0;
+   listc1 = Table[0, {nt, 1, dl}];
+   Do[(
+     {x01, y01, A1, B1} = listL[[nt]];
+     cntr = A1 (xc - x01) - B1 (yc - y01);
+     If[cntr == 0, (sch = sch + 1; listc1[[sch]] = nt)]), {nt, 1, dl}];
+   listc = Table[listc1[[nt]], {nt, 1, sch}]);
+
+prMiPt := (
+   dl = Length[listc];
+   listAB = Table[{0, 0}, {n, 1, dl}];
+   Do[(ntt = listc[[nt]];
+     listAB[[nt, 1]] = listL[[ntt, 3]];
+     listAB[[nt, 2]] = listL[[ntt, 4]]), {nt, 1, dl}];
+   
+   listPt = Table[{0, 0}, {nt, 1, dl}];
+   schPt = 0;
+   
+   Do [(
+     {xp, yp, xm, ym} =
+      {xc + listAB[[nt, 2]], yc + listAB[[nt, 1]], 
+       xc - listAB[[nt, 2]], yc - listAB[[nt, 1]]};
+     listprz = Table[0, {nt1, 1, dl}];
+     Do [(
+       {A, B} = {listAB[[kt, 1]], listAB[[kt, 2]]};
+       sgn0 = A (-xc) - B (-yc);
+       sgn = A (xp - xc) - B (yp - yc);
+       If[sgn > 0, listprz[[kt]] = 1];
+       If[sgn < 0, listprz[[kt]] = -1];
+       ), {kt, 1, dl}];
+     
+     sm = 0; sp = 0;
+     Do[(If[listprz[[kt]] < 0, sm = sm + 1];
+       If[listprz[[kt]] > 0, sp = sp + 1]), {kt, 1, dl}];
+     
+     If[sp == 0, If[sgn0 < 0, (schPt = schPt + 1;
+        listPt[[schPt]] = {nt, xc, yc, xp, yp, listAB[[nt, 1]], 
+          listAB[[nt, 2]]})]];
+     
+     If[sp == 0, If[sgn0 > 0, (schPt = schPt + 1;
+        listPt[[schPt]] = {nt, xc, yc, xm, ym, listAB[[nt, 1]], 
+          listAB[[nt, 2]]})]];
+     
+     If[sm == 0, If[sgn0 < 0, (schPt = schPt + 1;
+        listPt[[schPt]] = {nt, xc, yc, xm, ym, listAB[[nt, 1]], 
+          listAB[[nt, 2]]})]];
+     
+     If[sm == 0, If[sgn0 > 0, (schPt = schPt + 1;
+        listPt[[schPt]] = {nt, xc, yc, xp, yp, listAB[[nt, 1]], 
+          listAB[[nt, 2]]})]];
+     ), {nt, 1, dl}];
+   listemp = Table[listPt[[nt]], {nt, 1, schPt}];
+   listPt = listemp;
+   listEdge = 
+    Table[{{xc, yc, listPt[[nt, 4]], listPt[[nt, 5]]}}, {nt, 1, 
+      schPt}]);
+
+prcros[1, 4];
+Print[{xc, yc}];
+project[xc, yc];
+Print[listc];
+prMiPt;
+Print[listPt]
+Print[listEdge]
