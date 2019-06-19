@@ -1,0 +1,22 @@
+prlisT := (n1 = listPt[[1, 1]];
+   n2 = listPt[[2, 1]];
+   xc = listPt[[1, 2]];
+   yc = listPt[[1, 3]];
+   x1 = listPt[[1, 4]];
+   y1 = listPt[[1, 5]];
+   x2 = listPt[[2, 4]];
+   y2 = listPt[[2, 5]];
+   dall = Length[listL];
+   lisT = Table[{0, 0}, {nt, 1, dall}];
+   Do[(If[nt != n1 || nt != n2, ({x0, y0, A, B} = listL[[nt]];
+       If[A (x1 - xc) - B (y1 - yc) == 0, lisT[[nt, 1]] = -1, 
+        lisT[[nt, 
+           1]] = (-A (xc - x0) + B (yc - y0))/(A (x1 - xc) - 
+            B (y1 - yc))];
+       If[A (x2 - xc) - B (y2 - yc) == 0, lisT[[nt, 2]] = -1, 
+        lisT[[nt, 
+           2]] = (-A (xc - x0) + B (yc - y0))/(A (x2 - xc) - 
+            B (y2 - yc))];)]), {nt, 1, dall}]);
+prlisT;
+dall = Length[listL];
+Do[Print[{nt, lisT[[nt]]}], {nt, 1, dall}];
